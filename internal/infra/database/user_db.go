@@ -9,7 +9,7 @@ type User struct {
 	DB *gorm.DB
 }
 
-func NewUser(db *gorm.DB) *User {
+func NewUser(db *gorm.DB) UserInterface {
 	return &User{
 		DB: db,
 	}
