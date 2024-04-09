@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -33,6 +34,9 @@ func main() {
 	r.Use(middleware.Logger)
 
 	r.Post("/products", productHandler.CreateProduct)
+	r.Get("/products/{id}", productHandler.GetProduct)
+	r.Put("/products/{id}", productHandler.UpdateProduct)
 
+	fmt.Printf("Server running on port %s", cfg.WebServerPort)
 	http.ListenAndServe(":"+cfg.WebServerPort, r)
 }
