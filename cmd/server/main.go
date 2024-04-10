@@ -36,6 +36,8 @@ func main() {
 	r.Post("/products", productHandler.CreateProduct)
 	r.Get("/products/{id}", productHandler.GetProduct)
 	r.Put("/products/{id}", productHandler.UpdateProduct)
+	r.Delete("/products/{id}", productHandler.DeleteProduct)
+	r.Get("/products", productHandler.FetchProducts)
 
 	fmt.Printf("Server running on port %s", cfg.WebServerPort)
 	http.ListenAndServe(":"+cfg.WebServerPort, r)
