@@ -30,6 +30,9 @@ func main() {
 	productDB := database.NewProduct(db)
 	productHandler := handlers.NewProductHandler(productDB)
 
+	userDB := database.NewUser(db)
+	userHandler := handlers.NewUserHandler(userDB)
+
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 
@@ -38,6 +41,8 @@ func main() {
 	r.Put("/products/{id}", productHandler.UpdateProduct)
 	r.Delete("/products/{id}", productHandler.DeleteProduct)
 	r.Get("/products", productHandler.FetchProducts)
+
+	r.Post("/users", userHandler.CreateUser)
 
 	fmt.Printf("Server running on port %s", cfg.WebServerPort)
 	http.ListenAndServe(":"+cfg.WebServerPort, r)
