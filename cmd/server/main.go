@@ -31,7 +31,7 @@ func main() {
 	productHandler := handlers.NewProductHandler(productDB)
 
 	userDB := database.NewUser(db)
-	userHandler := handlers.NewUserHandler(userDB)
+	userHandler := handlers.NewUserHandler(userDB, cfg.TokenAuth, cfg.JWTExpiresIn)
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
@@ -43,6 +43,7 @@ func main() {
 	r.Get("/products", productHandler.FetchProducts)
 
 	r.Post("/users", userHandler.CreateUser)
+	r.Post("/users/signin", userHandler.GetJwt)
 
 	fmt.Printf("Server running on port %s", cfg.WebServerPort)
 	http.ListenAndServe(":"+cfg.WebServerPort, r)
