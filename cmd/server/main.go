@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -32,10 +33,13 @@ func main() {
 	productHandler := handlers.NewProductHandler(productDB)
 
 	userDB := database.NewUser(db)
-	userHandler := handlers.NewUserHandler(userDB, cfg.TokenAuth, cfg.JWTExpiresIn)
+	userHandler := handlers.NewUserHandler(userDB)
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+	r.Use(middleware.WithValue("jwt", cfg.TokenAuth))
+	r.Use(middleware.WithValue("jwtExpiresIn", cfg.JWTExpiresIn))
 
 	r.Route("/products", func(r chi.Router) {
 		// Protect /products routes with JWT
@@ -54,4 +58,11 @@ func main() {
 
 	fmt.Printf("Server running on port %s", cfg.WebServerPort)
 	http.ListenAndServe(":"+cfg.WebServerPort, r)
+}
+
+func LogRequest(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("Request: %s %s", r.Method, r.URL.Path)
+		next.ServeHTTP(w, r)
+	})
 }
